@@ -1,0 +1,15 @@
+Que es una base de datos realacional :
+ 
+Una base de datos relacional es aquella en la cual las tablas creadas y llenadas tienen una relacion entre si por medio del primary key 
+o por medio de el llendo de las tablas 
+
+Que es DML:
+es la manipulacion de las tablas usando los siguientes comandos 
+- Alter table
+- Drop table 
+
+Que es DDL: 
+es la creacion de tablas de mediantes los siguientes comandos 
+- create table
+- insert into
+
