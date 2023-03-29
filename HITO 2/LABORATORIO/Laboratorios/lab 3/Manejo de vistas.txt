@@ -1,0 +1,62 @@
+Create database Hito2_v2;
+use Hito2_v2;
+
+
+create table usuarios
+(
+    id_usuario integer auto_increment primary key ,
+    nombres varchar (50) not null,
+    apellidos varchar (50) not null,
+    edad integer not null,
+    email varchar (50) not null
+);
+
+insert into usuarios (id_usuario, nombres, apellidos, edad, email)
+values (154, 'carlos','mamani',20, 'carlosmamni@gmail.com');
+
+Insert into usuarios (id_usuario, nombres, apellidos, edad, email)
+values (1333, 'luis','alvarez',21, 'luismamni@gmail.com');
+
+insert into usuarios (id_usuario, nombres, apellidos, edad, email)
+values (155, 'kathy','de la fuente ',25, 'kathy1234@gmail.com');
+
+insert into usuarios (id_usuario, nombres, apellidos, edad, email)
+values (9898, 'nilber','aranibar',30, 'nilberi@gmail.com');
+
+
+
+
+create view  mayores_a_30 as
+select *
+from usuarios
+where edad =30;
+
+select *
+from mayores_a_30 ;
+
+alter view mayores_a_30 as
+    select us.nombres, us.apellidos, us.edad, us.email
+    from usuarios as us
+where us.edad = 30;
+
+
+alter view mayores_a_30 as
+    select CONCAT(us.nombres, us.apellidos) as fullname,
+    (us.edad) as  Edad_usuario,
+    (us.email) as  Email_usuario
+
+    from usuarios as us;
+
+alter view mayores_a_30 as
+    select CONCAT(us.nombres, us.apellidos) as fullname,
+    (us.edad) as  Edad_usuario,
+    (us.email) as  Email_usuario
+
+    from mayores_a_30 as us
+    where us.fullname like 3;
+
+
+
+select ma.fullname
+    from mayores_a_30 as ma
+where ma.fullname like '%3'

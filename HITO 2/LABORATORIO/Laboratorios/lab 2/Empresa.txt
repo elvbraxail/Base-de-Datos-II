@@ -1,0 +1,61 @@
+create database empresa
+use empresa
+
+
+create table empleado
+(
+    ci integer auto_increment primary key not null,
+    nombre varchar (100) not null,
+    apellido varchar (100) not null,
+    mail varchar (100) not null,
+
+    nit integer not null,
+    foreign key (nit) references industry (nit)
+
+
+);
+
+insert into empleado (ci,nombre,apellido,mail,nit)
+values (89989, 'luis', 'torrico de la fuente', 'luisfuente@gmail.com',8953245);
+insert into empleado (ci,nombre,apellido,mail,nit)
+values (701414, 'karla', 'macherano', 'karla@gmail.com',623477);
+insert into empleado (ci,nombre,apellido,mail,nit)
+values (35309, 'manuel', 'cespedes', 'cespedes@gmail.com',623477);
+insert into empleado (ci,nombre,apellido,mail,nit)
+values (252789, 'carlos', 'mamani choque', 'choquecarlos@gmail.com',8953245);
+
+
+
+create table industry
+(
+    nit integer auto_increment primary key not null,
+    nombre_industry varchar (100) not null
+
+);
+insert into industry (nit, nombre_industry)
+values (8953245, 'PAPEX' );
+insert into industry (nit, nombre_industry)
+values (6234789, 'ADIDAS' );
+
+
+
+create table area
+(
+    id_area integer auto_increment primary key not null,
+    tipo_de_area varchar (100) not null,
+    num_sala integer not null,
+    ci integer not null,
+    nit integer not null,
+    foreign key (ci) references empleado (ci),
+    foreign key (nit) references industry (nit)
+
+);
+
+insert into area (id_area, tipo_de_area, num_sala, ci, nit)
+values (1,'marketing', 1, 89989, 8953245 );
+insert into area (id_area, tipo_de_area, num_sala, ci, nit)
+values (2,'cajas', 2, 701414, 623477);
+insert into area (id_area, tipo_de_area, num_sala, ci, nit)
+values (3,'reparto', 3, 35309, 623477 );
+insert into area (id_area, tipo_de_area, num_sala, ci, nit)
+values (4,'limpieza', 4, 252789, 8953245 )
