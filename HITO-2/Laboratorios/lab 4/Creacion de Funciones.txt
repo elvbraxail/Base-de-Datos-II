@@ -1,0 +1,241 @@
+CREATE DATABASE biblioteca2;
+USE biblioteca2;
+
+CREATE TABLE autor (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  nacionalidad VARCHAR(50),
+  fecha_nacimiento DATE
+);
+
+CREATE TABLE usuario (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  fecha_nacimiento DATE,
+  direccion VARCHAR(100)
+);
+
+CREATE TABLE libro (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  titulo VARCHAR(100) NOT NULL,
+  isbn VARCHAR(20),
+  fecha_publicacion DATE,
+  autor_id INTEGER,
+  FOREIGN KEY (autor_id) REFERENCES autor(id)
+);
+
+CREATE TABLE prestamo (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  fecha_inicio DATE NOT NULL,
+  fecha_fin DATE NOT NULL,
+  libro_id INTEGER REFERENCES libro(id) ON DELETE CASCADE,
+  usuario_id INTEGER REFERENCES usuario(id) ON DELETE CASCADE
+);
+
+CREATE TABLE categoria (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE libro_categoria (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  libro_id INTEGER REFERENCES libro(id) ON DELETE CASCADE,
+  categoria_id INTEGER REFERENCES categoria(id) ON DELETE CASCADE
+);
+
+
+INSERT INTO autor (nombre, nacionalidad, fecha_nacimiento) VALUES
+('Gabriel Garcia Marquez', 'Colombiano', '1927-03-06'),
+('Mario Vargas Llosa', 'Peruano', '1936-03-28'),
+('Pablo Neruda', 'Chileno', '1904-07-12'),
+('Octavio Paz', 'Mexicano', '1914-03-31'),
+('Jorge Luis Borges', 'Argentino', '1899-08-24');
+
+
+INSERT INTO libro (titulo, isbn, fecha_publicacion, autor_id) VALUES
+('Cien años de soledad', '978-0307474728', '1967-05-30', 1),
+('La ciudad y los perros', '978-8466333867', '1962-10-10', 2),
+('Veinte poemas de amor y una canción desesperada', '978-0307477927', '1924-08-14', 3),
+('El laberinto de la soledad', '978-9681603011', '1950-01-01', 4),
+('El Aleph', '978-0307950901', '1949-06-30', 5);
+
+
+INSERT INTO usuario (nombre, email, fecha_nacimiento, direccion) VALUES
+('Juan Perez', 'juan.perez@gmail.com', '1985-06-20', 'Calle Falsa 123'),
+('Maria Rodriguez', 'maria.rodriguez@hotmail.com', '1990-03-15', 'Av. Siempreviva 456'),
+('Pedro Gomez', 'pedro.gomez@yahoo.com', '1982-12-10', 'Calle 7ma 789'),
+('Laura Sanchez', 'laura.sanchez@gmail.com', '1995-07-22', 'Av. Primavera 234'),
+('Jorge Fernandez', 'jorge.fernandez@gmail.com', '1988-04-18', 'Calle Real 567');
+
+
+INSERT INTO prestamo (fecha_inicio, fecha_fin, libro_id, usuario_id) VALUES
+('2022-01-01', '2022-01-15', 1, 1),
+('2022-01-03', '2022-01-18', 2, 2),
+('2022-01-05', '2022-01-20', 3, 3),
+('2022-01-07', '2022-01-22', 4, 4),
+('2022-01-09', '2022-01-24', 5, 5);
+
+
+INSERT INTO categoria (nombre) VALUES
+('Novela'),
+('Poesía'),
+('Ensayo'),
+('Ciencia Ficción'),
+('Historia');
+
+
+INSERT INTO libro_categoria (libro_id, categoria_id) VALUES
+(1, 1),
+(1, 3),
+(2, 1),
+(2, 5),
+(3, 2),
+(4, 3),
+(5, 4);
+
+
+alter table libro add column paginas integer default 20;
+
+alter table libro add column editorial varchar(70) default 'Don Bosco';
+
+select *
+from autor AS au
+  INNER JOIN libro l on au.id = l.autor_id
+where au.nacionalidad = 'Argentino';
+
+select * from libro;
+
+select l.titulo as titulo,
+       cat.nombre as categoria
+       from categoria as cat
+ INNER JOIN biblioteca2.libro_categoria lc on cat.id = lc.categoria_id
+         INNER JOIN biblioteca2.libro l on lc.libro_id = l.id
+WHERE nombre = 'Ciencia Ficcion ' ;
+
+create view bookContent as
+select lib.titulo as tittleBook,
+       lib.editorial as editorialBook,
+       lib.paginas as pagesBook,
+       (
+     case
+     when lib.paginas > 10 and lib.paginas <= 30 then 'contenido basico'
+     when lib.paginas > 30 and lib.paginas <= 80 then 'contenido mediano'
+     when lib.paginas > 80 and lib.paginas <= 150 then 'contenido superior'
+     else 'Contenido avanzado'
+           end
+       ) as ContentBook
+FROM libro AS lib;
+
+select * from bookContent;
+#DEACUERDO A LA VISTA CREADA CONTAR CUANTOS LIBROS DE CONTENIDO MEDIA
+
+select count(*) from bookContent where contentBook = 'contenido mediano';
+
+#CREATE VIEW bookAndUser AS
+#SELECT CONCAT(us.titulo,'',US.editorial,'',us.categoria ) AS BookDetail,
+#FROM libro AS  lib;
+#SELECT CONCAT(US.nombre,'',us.nacionalidad) AS AutirDetail
+#FROM usuario as usu;
+#select * from bookAndUser;
+
+CREATE VIEW bookAndUser AS
+select CONCAT(lib.titulo,'',lib.editorial,'',cat.nombre ) AS BookDetail,
+       CONCAT(au.nombre,'',au.nacionalidad) AS AutirDetail
+from libro as lib
+INNER JOIN autor as au ON lib.autor_id = au.id
+INNER JOIN libro_categoria as lc ON lib.id = lc.libro_id
+INNER JOIN  categoria as cat ON cat.id = lc.categoria_id;
+select * from libro;
+select * from usuario;
+
+
+select l.titulo as titulo,
+       cat.nombre as categoria
+
+       from categoria as cat
+
+INNER JOIN biblioteca2.libro_categoria lc on cat.id = lc.categoria_id
+INNER JOIN biblioteca2.libro l on lc.libro_id = l.id
+       inner autor as au on au
+WHERE nombre = 'Historia' and    ;
+
+use biblioteca2
+
+select *
+    from libro as li
+inner join autor a on li.autor_id = a.id
+inner join libro_categoria lc on li.id = lc.libro_id
+inner join categoria c on lc.categoria_id = c.id
+where nacionalidad = 'Peruano' and a.nombre = 'Historia'
+
+select cat2.nombre , au.nombre as Name , au.nacionalidad  as nacionalidad
+    from libro as li
+inner join autor as au on li.autor_id = au.id
+inner join libro_categoria as cat1 on li.id = cat1.libro_id
+inner join categoria as cat2 on  cat1.categoria_id = cat2.id
+where nacionalidad = 'Peruano' and cat2.nombre = 'Historia';
+
+Create  or replace FUNCTION  eje ()
+returns varchar(50)
+
+    begin
+        return 'hola aaaaaaaa';
+    end;
+
+Create  or replace FUNCTION  numero  ()
+returns integer
+
+    begin
+        return 10;
+    end;
+
+select numero ()
+
+Create   FUNCTION  parametros  (nombres varchar (30), edad integer , fecha date)
+returns varchar(30)
+
+    begin
+        return nombres ;
+    end;
+
+select parametros( 'pepe')
+
+
+Create   FUNCTION  calculadora  (a integer, b integer  , tipo varchar (30))
+returns integer
+
+    begin
+        declare resultado integer default  0;
+        case tipo
+        when 'suma ' then
+            set resultado = a + b  ;
+        when 'resta ' then
+            set resultado = a - b  ;
+        when 'multiplicacion  ' then
+            set resultado = a * b  ;
+        when 'division ' then
+        end case
+
+
+  end;
+
+
+create function Peruanos (cat  varchar (30) , nac varchar (20))
+returns bool
+begin
+    declare respuesta bool default  false ;
+    if cat = 'Historia ' and nac = 'Peruano ' then
+        set respuesta = true ;
+
+
+    end if;
+    return  respuesta;
+end;
+
+select cat2.nombre , au.nombre as Name , au.nacionalidad  as nacionalidad
+    from libro as li
+inner join autor as au on li.autor_id = au.id
+inner join libro_categoria as cat1 on li.id = cat1.libro_id
+inner join categoria as cat2 on  cat1.categoria_id = cat2.id
+where Peruanos(cat2.nombre, au.nacionalidad  ) = true;
