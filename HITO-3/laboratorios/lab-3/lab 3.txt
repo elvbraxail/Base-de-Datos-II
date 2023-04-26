@@ -1,0 +1,48 @@
+create or replace function cadenas (a text , b2 text )
+returns text
+begin
+    declare str text default '' ;
+
+    if char_length (a, b2 ) and strcmp(a , b2) >  15
+
+        then set str = ' son cadenas igulaes  ';
+        else
+        set str = ' cadenas distintas ';
+
+    end if;
+    return  str;
+
+end;
+
+select cadenas('DBA-II', 'dba-i');
+
+select substr('hola ', 3);
+select substr('dba 2023 Unifranz ',4 );
+select substr('dba 2023 Unifranz ' from  4 for  5 ); # de izquierda a derecha
+select substr('sakila ', -3); # desde derecha a izquierda
+select substr('dbaII 2023 Unifranz', -13 , 4 );
+
+select LOCATE ('2023', 'base da datos II, gestion 2023 Unifranz'); # permite saber de que subcadena empiza una plabra
+select LOCATE ('2023', 'base da datos II, gestion 2023 Unifranz 2023');
+
+
+create or replace function oooooo (ci text , extension text )
+returns text
+begin
+    declare str text default '' ;
+    if Locate( extension  , ci  ) > 0 then
+
+        set str = concat(' si existe ' ,LOCATE(extension,ci ));
+        else
+        set str = ' no existe  ';
+
+        end if ;
+    return  str ;
+end;
+
+select oooooo( '7014140lp' ,'LP')
+
+
+CREATE OR REPLACE function aaaqaaaa (aaa integer )
+returns integer
+begin
