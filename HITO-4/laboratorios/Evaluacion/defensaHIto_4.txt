@@ -1,0 +1,136 @@
+create database defensa_hito4_2023;
+use defensa_hito4_2023;
+
+create table departamento (
+    id_dep int  primary key,
+    nombre varchar(50)
+);
+insert into departamento (id_dep, nombre) values (1, 'LaPaz');
+insert into departamento (id_dep, nombre) values (2, 'Oruro');
+insert into departamento (id_dep, nombre) values (3, 'Cochabamba');
+insert into departamento (id_dep, nombre) values (4, 'Potosi');
+insert into departamento (id_dep, nombre) values (5, 'Tarija');
+
+create table provincia(
+    id_prov int primary key,
+    nombre varchar(50),
+    id_dep int,
+    foreign key (id_dep) references departamento(id_dep)
+);
+
+
+
+
+create table persona(
+    id_per int  primary key,
+    nombre varchar(20),
+    apellidos varchar(50),
+    fecah_nac date,
+    edad int,
+    email varchar(50),
+    id_dep int,
+    id_prov int,
+    sexo char(1),
+    foreign key (id_dep) references departamento(id_dep),
+    foreign key (id_prov) references provincia(id_prov)
+);
+
+create table proyecto (
+    id_proy int  primary key,
+    nombreProy varchar(100),
+    tipoProy varchar(30)
+);
+
+create table detalle_proyecto(
+    id_dp int  primary key,
+    id_per int,
+    id_proy int,
+    foreign key (id_per) references persona(id_per),
+    foreign key (id_proy) references proyecto(id_proy)
+
+);
+
+
+create table audit_proyectos (
+    id_audit int auto_increment primary key ,
+    nombre_proy_anterior varchar (30),
+    nombre_proy_posterior varchar (30),
+    tipo_proy_anterior varchar (30),
+    tipo_proy_posterior varchar (30),
+    operation varchar (30),
+    userid varchar (30),
+    hostname varchar (30),
+    fecha varchar (30)
+);
+
+create or replace trigger auditoriaAuditproyectos
+         after insert
+    on proyecto
+    for each row
+    begin
+        insert into audit_proyectos (id_audit, nombre_proy_anterior, nombre_proy_posterior, tipo_proy_anterior, tipo_proy_posterior, operation, userid, hostname, fecha)
+        SELECT 'el valor antes de la modificacion',  new.nombreProy,' el valor despues de modificacion' , new.tipoProy , 'insertar', user(), @@hostname, now();
+    end;
+
+create or replace trigger auditoriaAuditproyectos2
+         after delete
+    on proyecto
+    for each row
+    begin
+        insert into audit_proyectos (id_audit, nombre_proy_anterior, nombre_proy_posterior, tipo_proy_anterior, tipo_proy_posterior, operation, userid, hostname, fecha)
+        SELECT   old.nombreProy,' update' , old.tipoProy , user(), @@hostname, now();
+    end;
+
+create or replace trigger auditoriaAuditproyectos3
+         after update
+    on proyecto
+    for each row
+    begin
+        insert into audit_proyectos (id_audit, nombre_proy_anterior, nombre_proy_posterior, tipo_proy_anterior,
+                                     tipo_proy_posterior, operation, userid, hostname)
+        SELECT '',  new.nombreProy,' el valor despues de modificacion' , new.tipoProy , 'insertar', user(), @@hostname, now();
+    end;
+
+
+
+
+create or replace trigger errorfallo
+    before insert
+    on proyecto
+    for each row
+    begin
+        declare tipodia text default dayname(current_date);
+        declare tipomes text default monthname(current_date);
+
+        if (new.id_proy = 'Forestacion 'and tipodia = 'Wednesday' and tipomes = 'JUNE') then
+            signal sqlstate '45000'
+            set message_text = ' no se puede insertar datos ';
+
+        end if;
+    end;
+
+
+insert into proyecto (id_proy, nombreProy, tipoProy)
+values (0,'Teleferico', 'Forestacion');
+
+
+create or replace function calendario2 (tipodia text)
+     returns text
+     begin
+         declare a text default '';
+         case
+             when tipodia = 'Monday' then set a = ' lunes';
+             when tipodia = 'Tuesday' then set a = ' martes ';
+             when tipodia = 'Wednesday' then set a = ' miercoles';
+             when tipodia = 'Thursday' then set a = ' jueves';
+             when tipodia = 'Friday' then set a = ' viernes';
+             when tipodia = 'Saturday' then set a = ' sabado';
+             when tipodia = 'Sunday' then set a = ' domingo';
+        else
+             set a = ' dia de la semana no encontrada ';
+       end case ;
+         return a;
+ end;
+
+
+select calendario2('Monday')
